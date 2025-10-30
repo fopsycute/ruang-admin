@@ -6,7 +6,7 @@
 <div class="container">
   <div class="page-inner">
     <div class="page-header">
-      <h3 class="fw-bold mb-3">Create Group / Tribe</h3>
+      <h3 class="fw-bold mb-3">Edit Group / Tribe</h3>
     </div>
 
     <div class="row">
@@ -17,128 +17,147 @@
             <div class="card-title">Group Details</div>
           </div>
           <div class="card-body">
-
+		<form class="enrollment-tribes" id="admincreateGroupForm" method="POST" enctype="multipart/form-data">
             <!-- Group/Tribe Name -->
-            <div class="form-group">
-              <label for="groupName">Group/Tribe Name</label>
-              <input type="text" class="form-control" id="groupName" placeholder="Enter group name">
+                 <!-- Group/Tribe Name -->
+            <div class="row mb-3">
+              <div class="col-12">
+                <label class="form-label">Group/Tribe Name:</label>
+                <input type="text" name="group_name" class="form-control" required>
+              </div>
             </div>
 
             <!-- Group Description -->
-            <div class="form-group">
-              <label for="groupDescription">Group Description</label>
-              <textarea id="groupDescription" class="form-control" rows="4" placeholder="Describe the group/tribe"></textarea>
+            <div class="row mb-3">
+              <div class="col-12">
+                <label class="form-label">Group Description:</label>
+                <textarea name="group_description" class="editor" rows="4"></textarea>
+              </div>
             </div>
 
             <!-- Group Type -->
-            <div class="form-group">
-              <label for="groupType">Group Type</label>
-              <select id="groupType" class="form-control select2-single">
-                <option value="Open">Open (Anyone can join)</option>
-                <option value="Closed">Closed (Join only by approval/invitation)</option>
-              </select>
-            </div>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">Group Type:</label>
+                <select name="group_type" class="form-select" required>
+                  <option value="">Select Type</option>
+                  <option value="open">Open (Anyone can join)</option>
+                  <option value="closed">Closed (Join only by approval/invitation)</option>
+                </select>
+              </div>
 
-            <!-- Group Access -->
-            <div class="form-group">
-              <label>Group Access</label><br>
-              <div class="d-flex">
-                <div class="form-check mr-3">
-                  <input class="form-check-input" type="radio" name="groupAccess" id="freeAccess" value="Free">
-                  <label class="form-check-label" for="freeAccess">Free</label>
+              <!-- Group Access -->
+              <div class="col-md-6">
+                <label class="form-label">Group Access:</label><br>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="group_access" id="access_free" value="free" required>
+                  <label class="form-check-label" for="access_free">Free</label>
                 </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="groupAccess" id="paidAccess" value="Paid">
-                  <label class="form-check-label" for="paidAccess">Paid Subscription</label>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="group_access" id="access_paid" value="paid" required>
+                  <label class="form-check-label" for="access_paid">Paid Subscription</label>
                 </div>
               </div>
             </div>
 
-            <!-- Paid Subscription Plans -->
-            <div class="card mt-3">
-              <div class="card-header">
-                <div class="card-title">Subscription Plans (For Paid Access)</div>
+            <!-- Paid Subscription Details -->
+            <div class="row mb-3" id="paid-subscription-fields">
+              <div class="col-md-6">
+                <label class="form-label">1 Month - Subscription Fee (₦):</label>
+                <input type="number" name="fee_1m" class="form-control" min="0" step="100">
               </div>
-              <div class="card-body">
-                <div class="form-group">
-                  <label for="sub1">1 Month - Subscription Fee (₦)</label>
-                  <input type="number" class="form-control" id="sub1" placeholder="Enter amount">
+              <div class="col-md-6">
+                <label class="form-label">3 Months - Subscription Fee (₦):</label>
+                <input type="number" name="fee_3m" class="form-control" min="0" step="100">
+              </div>
+              <div class="col-md-6 mt-3">
+                <label class="form-label">6 Months - Subscription Fee (₦):</label>
+                <input type="number" name="fee_6m" class="form-control" min="0" step="100">
+              </div>
+              <div class="col-md-6 mt-3">
+                <label class="form-label">12 Months - Subscription Fee (₦):</label>
+                <input type="number" name="fee_12m" class="form-control" min="0" step="100">
+              </div>
+              
+            </div>
+
+            <!-- Categories & Sub-Categories -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">Category</label>
+                  <select name="category[]" id="category" class="form-select select-multiple" required multiple>
+              <option value="">-- Select Category --</option>
+              <?php
+           $url = $siteurl . "script/register.php?action=categorieslists";
+              $data = curl_get_contents($url); // using your helper from header
+            if ($data !== false) {
+                $categories = json_decode($data);
+                if (!empty($categories)) {
+                    foreach ($categories as $category) {
+                      foreach ($categories as $category) {
+                          $categoryId = $category->id;
+                          $name = $category->category_name; // adjust if DB column is different
+                          echo "<option value='{$categoryId}'>{$name}</option>";
+                      }
+                  }
+              }
+            }
+
+            else {
+                   echo "Error fetching data: " . curl_error($ch);
+                      }
+              ?>
+          </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Sub-Category</label>
+                <select name="subcategory[]" id="subcategory" class="form-select select-multiple" required multiple>
+                <option value="">-- Select Sub-Category --</option>
+                                
+                </select>
                 </div>
-                <div class="form-group">
-                  <label for="sub3">3 Months - Subscription Fee (₦)</label>
-                  <input type="number" class="form-control" id="sub3" placeholder="Enter amount">
-                </div>
-                <div class="form-group">
-                  <label for="sub6">6 Months - Subscription Fee (₦)</label>
-                  <input type="number" class="form-control" id="sub6" placeholder="Enter amount">
-                </div>
-                <div class="form-group">
-                  <label for="sub12">12 Months - Subscription Fee (₦)</label>
-                  <input type="number" class="form-control" id="sub12" placeholder="Enter amount">
-                </div>
-                <small class="form-text text-muted">
-                  Note: <strong>MARRIAGE.NG</strong> takes a twenty percent (20%) commission per payment.
-                </small>
+            </div>
+            <input type="hidden" name="user" value="<?php echo $buyerId; ?>" >
+            <input type="hidden" name="action" value="create_admingroup">
+            <!-- Group Rules -->
+            <div class="row mb-3">
+              <div class="col-12">
+                <label class="form-label">Group Rules & Guidelines (Optional)</label>
+                <textarea name="group_rules" class="editor" rows="4" placeholder="Basic rules or expectations for members"></textarea>
               </div>
             </div>
 
-            <!-- Categories -->
-            <div class="form-group mt-3">
-              <label for="groupCategories">Categories</label>
-              <select id="groupCategories" name="categories[]" class="form-control select2-multiple" multiple>
-                <option value="Marriage">Marriage</option>
-                <option value="Parenting">Parenting</option>
-                <option value="Faith">Faith</option>
-                <option value="Youth">Youth</option>
-                <option value="Health">Health</option>
-                <option value="Finance">Finance</option>
-              </select>
+            <!-- Upload Group Banner -->
+            <div class="row mb-3">
+              <div class="col-12">
+                <label class="form-label">Upload Group Banner / Image</label>
+                <input type="file" name="group_banner" class="form-control" accept="image/png, image/jpeg">
+                <small class="text-muted">Recommended size: 1200 x 600px (JPG/PNG)</small>
+              </div>
             </div>
 
-            <!-- Sub-Categories -->
-            <div class="form-group">
-              <label for="groupSubcategories">Sub-Categories</label>
-              <select id="groupSubcategories" name="subcategories[]" class="form-control select2-multiple" multiple>
-                <option value="Pre-Marital Counseling">Pre-Marital Counseling</option>
-                <option value="Conflict Resolution">Conflict Resolution</option>
-                <option value="Parent Coaching">Parent Coaching</option>
-                <option value="Teen Mentorship">Teen Mentorship</option>
-                <option value="Financial Planning">Financial Planning</option>
-                <option value="Health & Wellness">Health & Wellness</option>
-              </select>
+            <div class="row mb-3">
+              <div class="col-12">
+                <label class="form-label">Status</label>
+                <select name="status" class="form-control" required>
+
+               <option value="" disabled selected>Select</option>
+                <option value="pending">Pending</option>
+                <option value="active">Approved</option>
+                    </select>
+              </div>
             </div>
 
-            <!-- Rules & Guidelines -->
-            <div class="form-group">
-              <label for="groupRules">Group Rules & Guidelines (Optional)</label>
-              <textarea id="groupRules" class="form-control" rows="4" placeholder="State basic rules or expectations for members..."></textarea>
-            </div>
-
-            <!-- Banner Upload -->
-            <div class="form-group">
-              <label for="groupBanner">Upload Group Banner / Image</label>
-              <input type="file" id="groupBanner" class="form-control" accept="image/png, image/jpeg">
-              <small class="form-text text-muted">Recommended size: 1200 x 600px (JPG/PNG)</small>
-            </div>
 
             <!-- Submit Button -->
-            <button class="btn btn-primary mt-3">Create Group</button>
-
+            <button class="btn btn-primary mt-3" type="submit" id="submitBtn" >Create Group</button>
+			</form>
           </div>
         </div>
 
       </div>
     </div>
   </div>
-</div>
-
-
-
-
-
-
-
-
-
+  </div>
 
 <?php include "footer.php"; ?>

@@ -31,7 +31,7 @@
             <!-- Description -->
             <div class="form-group">
               <label for="description">Description</label>
-              <textarea id="description" class="form-control" rows="4" placeholder="Enter event description"></textarea>
+              <textarea id="description" class="editor"  placeholder="Enter event description"></textarea>
             </div>
 
             <!-- Categories -->

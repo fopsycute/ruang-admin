@@ -1,3 +1,58 @@
+<?php include "../script/connect.php"; ?>
+
+<?php
+
+
+$activeLog = 0; // 0 = guest, 1 = logged-in buyer
+$userType = "admin"; // specify this header is for buyer
+
+// Check if buyer is logged in via cookie
+$authentication = $_COOKIE['admin_auth'] ?? '';
+
+if ($authentication) {
+    // Fetch buyer data from API or DB
+    $url =  $siteurl . "script/user?action=buyerdata&buyer=$authentication";
+    $data = curl_get_contents($url);
+
+    if ($data !== false) {
+        $buyerData = json_decode($data);
+        if ($buyerData && empty($buyerData->error)) {
+            $buyerId = $buyerData->id ?? '';
+            $buyerfirstName = $buyerData->first_name;
+            $email = $buyerData->email;
+            $logo = $buyerData->photo;
+            $buyerName = $buyerData->first_name . " " . $buyerData->last_name;
+            $buyerEmail = $buyerData->email ?? '';
+            $buyerStatus = $buyerData->status ?? 'inactive';
+            $buyerVerified = $buyerData->is_verified ?? 0;
+            $activeLog = 1;
+        } else {
+            // Invalid token or missing data
+            $activeLog = 0;
+        }
+    } else {
+        $activeLog = 0;
+    }
+}
+
+// Redirect if the page requires login but user is not logged in
+if (!$authentication) {
+    $_SESSION['previous_page'] = $_SERVER['REQUEST_URI'];
+    header("Location: ../login.php");
+    exit;
+}
+
+// If logged in but account not verified, redirect to verification notice page
+/*
+if ($activeLog === 1 && isset($buyerVerified) && !$buyerVerified) {
+    header("Location: ../verify-account.php");
+    exit;
+}
+
+*/
+
+// Now you can use $activeLog to show/hide sections inside your page HTML
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -41,6 +96,7 @@
   <link href="assets/css/select2.min.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" href="assets/css/kaiadmin.min.css" />
 <link rel="stylesheet" href="assets/css/kaiadmin.css" />
+  <?php include "../script/tinymce.php"; ?>
 
     <!-- CSS Just for demo purpose, don't include it in your project -->
     <link rel="stylesheet" href="assets/css/demo.css" />
@@ -52,13 +108,8 @@
         <div class="sidebar-logo">
           <!-- Logo Header -->
           <div class="logo-header" data-background-color="dark">
-            <a href="index.html" class="logo">
-              <img
-                src="assets/img/kaiadmin/logo_light.svg"
-                alt="navbar brand"
-                class="navbar-brand"
-                height="20"
-              />
+            <a href="index.php" class="logo">
+          <img src="<?php echo $siteurl; ?>assets/img/<?php echo $siteimg; ?>" alt="logo" class="small-logo">
             </a>
             <div class="nav-toggle">
               <button class="btn btn-toggle toggle-sidebar">
@@ -94,6 +145,7 @@
                   <i class="fa fa-shop"></i>
                 </span>
               </li>
+              <!---
               <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#base">
                   <i class="fas fa-shopping-cart"></i>
@@ -172,19 +224,19 @@
                   </ul>
                 </div>
               </li>
-
+--->
                 <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#vendors">
                   <i class="fas fa-user"></i>
-                  <p>Vendor</p>
+                  <p>Users</p>
                   <span class="caret"></span>
                 </a>
                 <div class="collapse" id="vendors">
                   <ul class="nav nav-collapse">
                   
                     <li>
-                      <a href="all-vendors.php">
-                        <span class="sub-item">Manage Vendors</span>
+                      <a href="all-user.php">
+                        <span class="sub-item">Manage Users</span>
                       </a>
                     </li>
                   </ul>
@@ -192,14 +244,46 @@
               </li>
 
 
+                <li class="nav-item">
+                <a data-bs-toggle="collapse" href="#questions">
+                  <i class="fas fa-user"></i>
+                  <p>Questions</p>
+                  <span class="caret"></span>
+                </a>
+                <div class="collapse" id="questions">
+                  <ul class="nav nav-collapse">
+                  
+                    <li>
+                      <a href="my-question.php">
+                        <span class="sub-item">Admin Question</span>
+                      </a>
+                    </li>
+
+                     <li>
+                      <a href="pending-question.php">
+                        <span class="sub-item">Pending Question</span>
+                      </a>
+                    </li>
+
+                      <li>
+                      <a href="approved-questions.php">
+                        <span class="sub-item">Approved Question</span>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </li>
+
+<!---
+
               
                 <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#messages">
+                <a data-bs-toggle="collapse" href="#chats">
                   <i class="fas fa-comments"></i>
                   <p>Messages</p>
                   <span class="caret"></span>
                 </a>
-                <div class="collapse" id="messages">
+                <div class="collapse" id="chats">
                   <ul class="nav nav-collapse">
                   
                     <li>
@@ -216,7 +300,7 @@
                   </ul>
                 </div>
               </li>
-
+--->
               <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#forms">
                   <i class="fas fa-pen-square"></i>
@@ -231,15 +315,17 @@
                       </a>
                     </li>
                     <li>
-                      <a href="edit-blog.php">
-                        <span class="sub-item">Edit Blog</span>
+                      <a href="pending-blog.php">
+                        <span class="sub-item">Pending Blog</span>
                       </a>
                     </li>
-                         <li>
-                      <a href="add-question-article.php">
-                        <span class="sub-item">Question Answer</span>
+
+                    <li>
+                      <a href="approved-blo.php">
+                        <span class="sub-item">Approved Blog</span>
                       </a>
                     </li>
+                       
                   </ul>
                 </div>
               </li>
@@ -258,14 +344,43 @@
                     </li>
 
                     <li>
-                      <a href="edit-tribe.php">
-                        <span class="sub-item">Edit Tribe & Groups</span>
+                      <a href="all-groups.php">
+                        <span class="sub-item">All Groups</span>
                       </a>
+                    </li>
+
+                     <li>
+                      <a href="pending-groups.php">
+                        <span class="sub-item">Pending Groups</span>
+                      </a>
+                    </li>
+
+                     <li>
+                      <a href="approved-groups.php">
+                        <span class="sub-item">Approved Groups</span>
+                      </a>
+                    </li>
+
+                    <li>
+                      <a href="closed-groups.php">
+                        <span class="sub-item">View GroupRequests</span>
+                      </a>
+                    </li>
+
+                    <li>
+                      <a href="my-groups.php">
+                        <span class="sub-item">My Groups</span>
+                      </a>
+                    </li>
+
+                    <li>
+                     
                     </li>
                     
                   </ul>
                 </div>
               </li>
+              <!---
               <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#maps">
                   <i class="fas fa-map-marker-alt"></i>
@@ -319,6 +434,7 @@
                   </ul>
                 </div>
               </li>
+              ---->
             </ul>
           </div>
         </div>
@@ -360,6 +476,7 @@
               <nav
                 class="navbar navbar-header-left navbar-expand-lg navbar-form nav-search p-0 d-none d-lg-flex"
               >
+              <!---
                 <div class="input-group">
                   <div class="input-group-prepend">
                     <button type="submit" class="btn btn-search pe-1">
@@ -372,9 +489,11 @@
                     class="form-control"
                   />
                 </div>
+                --->
               </nav>
 
               <ul class="navbar-nav topbar-nav ms-md-auto align-items-center">
+                
                 <li
                   class="nav-item topbar-icon dropdown hidden-caret d-flex d-lg-none"
                 >
@@ -664,7 +783,7 @@
                     </div>
                     <span class="profile-username">
                       <span class="op-7">Hi,</span>
-                      <span class="fw-bold">Hizrian</span>
+                      <span class="fw-bold"><?php echo $buyerfirstName; ?></span>
                     </span>
                   </a>
                   <ul class="dropdown-menu dropdown-user animated fadeIn">
@@ -679,8 +798,8 @@
                             />
                           </div>
                           <div class="u-text">
-                            <h4>Hizrian</h4>
-                            <p class="text-muted">hello@example.com</p>
+                            <h4><?php echo $buyerfirstName; ?></h4>
+                            <p class="text-muted"><?php echo $email; ?></p>
                             <a
                               href="settings.php"
                               class="btn btn-xs btn-secondary btn-sm"
@@ -706,3 +825,4 @@
           </nav>
           <!-- End Navbar -->
         </div>
+        <input type="hidden" value="<?php echo $siteurl; ?>" id="siteurl">

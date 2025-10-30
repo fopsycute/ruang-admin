@@ -122,7 +122,7 @@
       <div class="modal-body">
         <div class="form-group mb-3">
           <label for="messageText">Your Message</label>
-          <textarea class="form-control" id="messageText" rows="4" placeholder="Type your message..."></textarea>
+          <textarea class="editor" id="messageText" rows="4" placeholder="Type your message..."></textarea>
         </div>
       </div>
       <div class="modal-footer">

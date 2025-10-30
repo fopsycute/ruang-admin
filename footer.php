@@ -4,8 +4,8 @@
             <nav class="pull-left">
               <ul class="nav">
                 <li class="nav-item">
-                  <a class="nav-link" href="http://www.themekita.com">
-                    ThemeKita
+                  <a class="nav-link" href="<?php echo $siteurl; ?>">
+                    <?php echo $sitename; ?>
                   </a>
                 </li>
                 <li class="nav-item">
@@ -18,11 +18,11 @@
             </nav>
             <div class="copyright">
               2024, made with <i class="fa fa-heart heart text-danger"></i> by
-              <a href="http://www.themekita.com">ThemeKita</a>
+              <a href="http://www.themekita.com"><?php echo $sitename; ?></a>
             </div>
             <div>
               Distributed by
-              <a target="_blank" href="https://themewagon.com/">ThemeWagon</a>.
+              <a target="_blank" href="https://themewagon.com/"><?php echo $sitename; ?></a>.
             </div>
           </div>
         </footer>
@@ -228,6 +228,10 @@
     <script src="assets/js/core/popper.min.js"></script>
     <script src="assets/js/core/bootstrap.min.js"></script>
 
+    <script src="<?php echo $siteurl; ?>assets/js/api.js"></script>
+
+
+
     <!-- jQuery Scrollbar -->
     <script src="assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
 
@@ -245,9 +249,9 @@
     <!-- Datatables -->
     <script src="assets/js/plugin/datatables/datatables.min.js"></script>
 
-    <!-- Bootstrap Notify -->
+    <!-- Bootstrap Notify
     <script src="assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js"></script>
-
+ -->
     <!-- jQuery Vector Maps -->
     <script src="assets/js/plugin/jsvectormap/jsvectormap.min.js"></script>
     <script src="assets/js/plugin/jsvectormap/world.js"></script>
@@ -257,6 +261,7 @@
 
     <!-- Kaiadmin JS -->
     <script src="assets/js/kaiadmin.min.js"></script>
+    <script src="assets/js/main.js"></script>
 
     <!-- Kaiadmin DEMO methods, don't include it in your project! -->
     <script src="assets/js/setting-demo.js"></script>

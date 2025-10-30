@@ -337,6 +337,12 @@ body {
 .no-box-shadow-style .card, .no-box-shadow-style .row-card-no-pd {
   border: 1px solid #eaeaea; }
 
+
+  .small-logo{
+    width:100px;
+    height:100px;
+    object-fit:contain;
+  }
 .main-header {
   background: #ffffff;
   min-height: 60px;
@@ -414,7 +420,14 @@ body {
     overflow: hidden;
     border-top: 1px solid #ebecec; }
 
+    /* small image */
+    .small-image{
+      width:60px;
+      height:60px;
+      object-fit:contain;
+    }
 /*      Page Wrapper      */
+
 .page-wrapper {
   min-height: calc(100vh - 57px);
   position: relative; }
@@ -5326,7 +5339,7 @@ label.error {
       justify-content: flex-end;
     }
     .chat-message.user .chat-bubble {
-      background: #0d6efd;
+      background: #ff7a00;
       color: white;
       border-bottom-right-radius: 5px;
     }
