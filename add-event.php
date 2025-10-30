@@ -146,7 +146,7 @@
           </div>
         </div>
 
-        <!-- Delivery Format -->
+        <!-- All Delivery Format -->
         <div class="card mt-4">
           <div class="card-header"><div class="card-title">Delivery Format</div></div>
           <div class="card-body">
