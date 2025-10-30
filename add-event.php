@@ -59,7 +59,7 @@
                   }
               }
             }
-
+   
             else {
                    echo "Error fetching data: " . curl_error($ch);
                       }
